@@ -2,9 +2,9 @@ name: MaikoTS AML Mod Compiler
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "MaikoTS" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "MaikoTS" ]
 
 jobs:
   build:
