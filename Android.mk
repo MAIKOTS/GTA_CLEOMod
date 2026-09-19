@@ -7,7 +7,7 @@ LOCAL_SRC_FILES := main.cpp mod/logger.cpp mod/config.cpp libcleo.cpp cleo201_re
 LOCAL_CFLAGS += -O2 -mfloat-abi=softfp -DNDEBUG -std=c11 -DAML_CLEO
 LOCAL_CXXFLAGS += -O2 -mfloat-abi=softfp -DNDEBUG -std=c++17
 
-# O -lc++fs e essencial no NDK r21 para linkar o <filesystem>
-LOCAL_LDLIBS := -llog -lc++fs
+LOCAL_LDLIBS := -llog
+LOCAL_LDFLAGS += -lstdc++fs -lc++fs
 
 include $(BUILD_SHARED_LIBRARY)
