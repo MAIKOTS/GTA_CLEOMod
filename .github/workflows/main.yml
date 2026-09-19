@@ -1,13 +1,14 @@
-name: AML Mod Compiler
+name: MaikoTS AML Mod Compiler
 
 on:
   push:
-    branches: [ "RUSJJ_CLEO_MOD" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "RUSJJ_CLEO_MOD" ]
+    branches: [ "main" ]
 
 jobs:
   build:
+    name: MaikoTS Mod Build
     runs-on: ubuntu-latest
     steps:
 
@@ -40,8 +41,8 @@ jobs:
     - name: Build the code...
       run: ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk NDK_DEBUG=0 -j4
 
-    - name: Upload the mod!
+    - name: Upload MaikoTS Compiled Mod
       uses: actions/upload-artifact@v4
       with:
-        name: compiled-mod.zip
-        path: ./libs
+        name: MaikoTS-libCLEOMod
+        path: ./libs/armeabi-v7a/libCLEOMod.so
