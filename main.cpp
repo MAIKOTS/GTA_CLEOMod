@@ -16,7 +16,7 @@ cleo_ifs_t* cleo = nullptr;
 
 #include "cleoaddon.h"
 cleo_addon_ifs_t cleo_addon_ifs;
-uint16_t FreeScriptAddonInfoId = 1; // 0 is "not assigned" (used for dumbo scripts without that info)
+uint16_t FreeScriptAddonInfoId = 1; // 0 é "não atribuído" (usado para scripts simples sem essa informação)
 ScriptAddonInfo ScriptAddonInfosStorage[ScriptAddonInfo::allocSize];
 char ScriptAddonVarStackStorage[ScriptAddonInfo::allocSize][ScriptAddonInfo::scriptStackSize] { 0 };
 std::map<std::string, uintptr_t> g_listExports;
@@ -28,10 +28,10 @@ char szCLEOVer[64] { 0 };
 #include "isautils.h"
 ISAUtils* sautils = nullptr;
 
-// Size of array
+// Tamanho da array
 #define sizeofA(__aVar)  ((int)(sizeof(__aVar)/sizeof(__aVar[0])))
 
-MYMODCFG(net.rusjj.cleolib, CLEO Library, 2.0.1.10, Alexander Blade & RusJJ & XMDS)
+MYMODCFG(net.rusjj.cleolib, CLEO Library, 2.0.1.10, Alexander Blade & RusJJ & XMDS & MaikoTS)
 BEGIN_DEPLIST()
     ADD_DEPENDENCY_VER(net.rusjj.aml, 1.3.0)
 END_DEPLIST()
@@ -66,21 +66,21 @@ inline void __pathback(char *str)
     if(i > 0) str[i] = 0;
 }
 
-// Pointers
+// Ponteiros
 void* pCLEO;
 uintptr_t nCLEOAddr, nGameAddr;
 Dl_info pDLInfo;
 eGameIdent* nGameIdent;
 __attribute__((__aligned__(4))) uint8_t g_ScriptBytesBuffer[16 * 1024 * 1024] { 0 };
 
-// Configs
+// Configurações
 ConfigEntry* pCfgCLEOLocation;
 ConfigEntry* pCfgCLEORedArrow;
 ConfigEntry* pCfgCLEOMenuColor;
 ConfigEntry* pCfgCLEOMenuArrowColor;
 ConfigEntry* pCfgCLEOMenuArrowPressedAlpha;
 
-// CLEO 2.0.1 pointers
+// Ponteiros do CLEO 2.0.1
 rgba_t* pCLEOMenuColor; // 1525C
 rgba_t* pCLEOMenuArrowColor; // 15250
 uint8_t* pCLEOArrowLastAlpha; // 2194FC
@@ -90,7 +90,7 @@ void* CLEOOpcodesStorage; // 219B20
 void** (*LookupForOpcodeFunc)(void* storage, uint16_t& opcode); // CE88
 void AddGXTLabel(const char* gxtLabel, const char* text);
 
-// Game pointers
+// Ponteiros do Jogo
 void** ppActiveScripts, **ppIdleScripts;
 void (*RemoveScriptFromList)(void* handle, void** list);
 void (*AddScriptToList)(void* handle, void** list);
@@ -107,22 +107,22 @@ GTASprite2D *ScriptSprites, *ScriptSpritesOrg;
 GTAScriptHandler* m_aDefaultOpcodeFuncs = NULL;
 int g_nMaxScriptsCount = 96;
 
-// CLEO itself
+// O próprio CLEO
 extern unsigned char cleoData[100160];
 
-// CLEO crashlogging
+// Registro de crashes do CLEO
 #define SCRIPTS_LOG_COUNT 32
 bool scriptDebugger = false;
 void *lastScriptHandle[SCRIPTS_LOG_COUNT] = { NULL };
 uint8_t *lastScriptPC[SCRIPTS_LOG_COUNT] =  { NULL };
 uint16_t lastScriptOp[SCRIPTS_LOG_COUNT] =  { 0x0000 };
 
-// Config-functions
+// Funções de configuração
 const char* pLocations[] = 
 {
     "CLEO 2.0.1",
-    "Old CLEO",
-    "Old CLEO (+cleo)",
+    "CLEO Antigo",
+    "CLEO Antigo (+cleo)",
     "../files/CLEO",
 };
 const char* pYesNo[] = 
@@ -147,7 +147,7 @@ void RemoveScript(void* handle)
     RemoveScriptFromList(handle, ppActiveScripts);
     if(GetAddonInfo(handle).parentThread)
     {
-        // TODO: bring on threads?
+        // TODO: trazer threads?
     }
     else if(GetAddonInfo(handle).isCustom)
     {
@@ -168,8 +168,8 @@ void RemoveScript(void* handle)
             int storageItem = *(int*)(*pScriptsStorage + i * 4);
             if(handle == *(void**)(storageItem + 28))
             {
-                // TODO: check if this is enough
-                *(bool*)(storageItem + 44) = false; // not launched
+                // TODO: verificar se isso é suficiente
+                *(bool*)(storageItem + 44) = false; // não executado
                 GetWakeTime(handle) = 0xFFFFFFFF;
                 return;
             }
@@ -192,24 +192,24 @@ void NoneFunctionLogic(uintptr_t) { return; }
 
 extern "C" __attribute__((target("thumb-mode"))) __attribute__((naked)) void Opcode0DD2_inject()
 {
-    //see https://github.com/XMDS/OP_0DD2FixAsm_call.git (cleo verison)
+    // veja https://github.com/XMDS/OP_0DD2FixAsm_call.git (versão do cleo)
 
     __asm volatile(
     ".thumb\n"
         "PUSH {R4-R7, LR}\n"
-        "MOV R4, R0\n"          // R0 = pointers to the first 4 parameters of the function
-        "MOV R5, R1\n"          // R1 = function addr 
-        "MOVS R6, #0x10\n"      // It starts from R4
+        "MOV R4, R0\n"          // R0 = ponteiros para os primeiros 4 parâmetros da função
+        "MOV R5, R1\n"          // R1 = endereço da função
+        "MOVS R6, #0x10\n"      // Começa a partir de R4
         "MOVS R7, #0\n"
-        "SUB SP, #0xB8\n"       // The maximum setting of the stack is 46 parameters
+        "SUB SP, #0xB8\n"       // A configuração máxima da pilha é de 46 parâmetros
 
         "loc_1:\n"
         "CMP R7, #0xB8\n"
         "BEQ loc_2\n"
-        "LDR R1, [R0, R6]\n"    // Read parameters from reg in 0DD3 in cleo. It starts from R4
-        "STR.W R1, [SP, R7]\n"  // Write the extracted parameters to the stack
-        "ADDS R6, #4\n"         // Next parameter
-        "ADDS R7, #4\n"         // Stack +4 to save the next parameter
+        "LDR R1, [R0, R6]\n"    // Lê parâmetros do reg no 0DD3 no cleo. Começa a partir de R4
+        "STR.W R1, [SP, R7]\n"  // Escreve os parâmetros extraídos na pilha
+        "ADDS R6, #4\n"         // Próximo parâmetro
+        "ADDS R7, #4\n"         // Pilha +4 para salvar o próximo parâmetro
         "B loc_1\n"
 
         "loc_2:\n"
@@ -217,8 +217,8 @@ extern "C" __attribute__((target("thumb-mode"))) __attribute__((naked)) void Opc
         "LDR R1, [R4, #4]\n"    // 0DD3 context_set_reg 1
         "LDR R2, [R4, #8]\n"    // 0DD3 context_set_reg 2
         "LDR R3, [R4, #0xC]\n"  // 0DD3 context_set_reg 3
-        "BLX R5\n"              // 0DD2 call func
-        "STR R0, [R4]\n"        // 0DD4 return value 
+        "BLX R5\n"              // 0DD2 chama função
+        "STR R0, [R4]\n"        // 0DD4 valor de retorno
         "ADD SP, #0xB8\n"
         "POP {R4-R7, PC}\n"
     );
@@ -233,7 +233,7 @@ extern int* ScriptParams;
 void ScmCleanup();
 DECL_HOOKv(CLEO_StartScripts)
 {
-    // Reset a number of addons.
+    // Reseta vários addons.
     FreeScriptAddonInfoId = 1;
 
     g_listExports.clear();
@@ -263,29 +263,9 @@ DECL_HOOKb(CLEO_OnOpcodeCall, int self, uint16_t opcode)
     
     if(opcode == 0x0DF0)
     {
-        // Init cleo variables
+        // Inicializa variáveis do cleo
         ScmCleanup();
     }
-    /*if(opcode == 0x0DEF)
-    {
-        // Launch CSI script from menu
-        int len = GetScriptsStorageSize();
-        for(int i = 0; i < len; ++i)
-        {
-            int storageItem = *(int*)(*pScriptsStorage + i * 4);
-            if(storageItem && *(int*)(storageItem + 24) != -1 && *(int*)(storageItem + 24) == ScriptParams[0])
-            {
-                void* handle = *(void**)(storageItem + 28);
-                if(handle != NULL)
-                {
-                    AssignAddonInfo(handle);
-                    GetAddonInfo(handle).parentThread = NULL;
-                    GetAddonInfo(handle).isCustom = true;
-                }
-                return ret;
-            }
-        }
-    }*/
     return ret;
 }
 
@@ -302,7 +282,7 @@ DECL_HOOK(int8_t, ProcessOneCommand, void* handle)
         }
         lastScriptHandle[0] = handle;
         lastScriptPC[0] = GetPC(handle);
-        lastScriptOp[0] = Read2Bytes_NoSkip(handle);// & 0x7FFF;
+        lastScriptOp[0] = Read2Bytes_NoSkip(handle);
     }
     
     int siz = pausedScripts.size();
@@ -310,7 +290,7 @@ DECL_HOOK(int8_t, ProcessOneCommand, void* handle)
     {
         if (pausedScripts[i].ptr == handle)
         {
-            return 1; // script paused, do not process
+            return 1; // script pausado, não processar
         }
     }
     
@@ -385,15 +365,15 @@ void SAUtilsStarted()
 {
     snprintf(szCLEOVer, sizeof(szCLEOVer), "CLEOMod v%s", modinfo->VersionString());
     sautils->AddButton(SetType_Mods, szCLEOVer, NoneFunctionLogic);
-    sautils->AddClickableItem(SetType_Game, "CLEO Location", pCfgCLEOLocation->GetInt(), 0, sizeofA(pLocations)-1, pLocations, OnLocationChanged, NULL);
-    sautils->AddClickableItem(SetType_Game, "CLEO Red Arrow", pCfgCLEORedArrow->GetInt(), 0, sizeofA(pYesNo)-1, pYesNo, OnRedArrowChanged, NULL);
+    sautils->AddClickableItem(SetType_Game, "CLEO Local", pCfgCLEOLocation->GetInt(), 0, sizeofA(pLocations)-1, pLocations, OnLocationChanged, NULL);
+    sautils->AddClickableItem(SetType_Game, "CLEO Seta Vermelha", pCfgCLEORedArrow->GetInt(), 0, sizeofA(pYesNo)-1, pYesNo, OnRedArrowChanged, NULL);
 }
 
 ON_MOD_PRELOAD()
 {
     logger->SetTag("CLEO Mod");
-    pCfgCLEOLocation = cfg->Bind("CLEO_Location", 1);
-    pCfgCLEORedArrow = cfg->Bind("CLEO_RedArrow", true);
+    pCfgCLEOLocation = cfg->Bind("CLEO_Location", 2);
+    pCfgCLEORedArrow = cfg->Bind("CLEO_RedArrow", false);
     pCfgCLEOMenuColor = cfg->Bind("CLEO_MenuColor", "55 127 175 150");
     pCfgCLEOMenuArrowColor = cfg->Bind("CLEO_MenuArrowColor", "55 127 175 100");
     pCfgCLEOMenuArrowPressedAlpha = cfg->Bind("CLEO_MenuArrowPressedAlpha", "180");
@@ -415,12 +395,12 @@ ON_MOD_PRELOAD()
     if(!pCLEO)
     {
       OOPSIE:
-        logger->Error("Failed to load CLEO library!");
+        logger->Error("Falha no carregamento da biblioteca CleoMod!");
         return;
     }
     
     auto libEntry = (void(*)())dlsym(pCLEO, "JNI_OnLoad");
-    if(!libEntry) goto OOPSIE; // How?
+    if(!libEntry) goto OOPSIE; // Como?
 
     dladdr((void*)libEntry, &pDLInfo);
     nCLEOAddr = (uintptr_t)pDLInfo.dli_fbase;
@@ -463,11 +443,11 @@ ON_MOD_PRELOAD()
         aml->PlaceNOP(nCLEOAddr + 0xBD82, 2);
     }
         
-    // XMDS Part 1
-    // Fixed OPCODE 0DD2
+    // XMDS Parte 1
+    // Correção do OPCODE 0DD2
     aml->Redirect(nCLEOAddr + 0x4EB8 + 0x1, (uintptr_t)Opcode0DD2_inject);
         
-    // CLEO Menu Color
+    // Cor do Menu do CLEO
     SET_TO(pCLEOMenuColor, nCLEOAddr + 0x1525C);
     aml->Unprot((uintptr_t)pCLEOMenuColor, sizeof(rgba_t));
     *pCLEOMenuColor = pCfgCLEOMenuColor->ParseColor();
@@ -488,12 +468,12 @@ ON_MOD_PRELOAD()
     HOOK(CLEO_StartScripts, nCLEOAddr + 0x5CD8 + 0x1);
     HOOK(CLEO_OnOpcodeCall, nCLEOAddr + 0x75B4 + 0x1);
     
-    // Start CLEO
+    // Inicia o CLEO
     libEntry();
     RegisterInterface("CLEO", cleo);
-    logger->Info("CLEO Initialized!");
+    logger->Info("CLEO Inicializado!");
 
-    // CleoAddon interface == 1
+    // Interface CleoAddon == 1
     cleo_addon_ifs.GetInterfaceVersion =    GetAddonIncludeInterfaceVersion;
     cleo_addon_ifs.ReadString =             CLEO_ReadStringEx;
     cleo_addon_ifs.WriteString =            CLEO_WriteStringEx;
@@ -544,7 +524,7 @@ ON_MOD_PRELOAD()
     cleo_addon_ifs.ResolvePath =            ResolvePath;
     cleo_addon_ifs.AddGXTLabel =            AddGXTLabel;
 
-    // CleoAddon interface == 2
+    // Interface CleoAddon == 2
     cleo_addon_ifs.GetActiveFlag =          GetActiveFlag;
     cleo_addon_ifs.IsInActiveScripts =      IsInActiveScripts;
     cleo_addon_ifs.IsInPausedScripts =      IsInPausedScripts;
@@ -569,7 +549,7 @@ ON_MOD_PRELOAD()
     cleo_addon_ifs.IsScriptCustom =         IsScriptCustom;
     cleo_addon_ifs.CallDefaultOpcode =      CallDefaultOpcode;
 
-    // CleoAddon interface == 3
+    // Interface CleoAddon == 3
     cleo_addon_ifs.SetPrivateVar =          SetPrivateVar;
     cleo_addon_ifs.GetPrivateVar =          GetPrivateVar;
     cleo_addon_ifs.GetLabelAddr =           GetLabelAddr;
@@ -591,9 +571,9 @@ ON_MOD_PRELOAD()
         return GetAddonInfoId(handle);
     };
 
-    // Finalize
+    // Finalizar
     RegisterInterface("CLEOAddon", &cleo_addon_ifs);
-    logger->Info("CLEO Addon Initialized!");
+    logger->Info("CLEO Addon Inicializado!");
 }
 
 ON_MOD_LOAD()
@@ -847,8 +827,8 @@ void Init201Opcodes();
 void Init4Opcodes();
 void Init5Opcodes();
 void InitMathOpcodes();
-__attribute__((__aligned__(4))) char g_ScriptStore[256 * 0x100]; // 0x100 is the size of script in GTA:SA
-                                 // (VC has smaller size=0x88 so it's fine to use BIGGER static value)
+__attribute__((__aligned__(4))) char g_ScriptStore[256 * 0x100]; // 0x100 é o tamanho do script em GTA:SA
+                                 // (VC possui tamanho menor=0x88 então não há problema em usar um valor estático MAIOR)
 __attribute__((__aligned__(4))) char g_ScriptSpritesStore[4 * 1024] { 0 }; // 
 __attribute__((__aligned__(4))) char g_ScriptRectsStore[60 * 1024] { 0 }; // 
 ON_ALL_MODS_LOAD()
@@ -857,30 +837,30 @@ ON_ALL_MODS_LOAD()
 
     nGameAddr = (uintptr_t)cleo->GetMainLibraryLoadAddress();
     
-    CLEO_RegisterOpcode(0x3A00, AML_HAS_MOD_LOADED); // 3A00=2,%2d% = aml_has_mod_loaded %1s% // IF and SET
-    CLEO_RegisterOpcode(0x3A01, AML_HAS_MODVER_LOADED); // 3A01=3,%3d% = aml_has_mod_loaded %1s% version %2s% // IF and SET
-    CLEO_RegisterOpcode(0x3A02, AML_REDIRECT_CODE); // 3A02=4,aml_redirect_code %1d% add_ib %2d% to %3d% add_ib %4d%
-    CLEO_RegisterOpcode(0x3A03, AML_JUMP_CODE); // 3A03=4,aml_jump_code %1d% add_ib %2d% to %3d% add_ib %4d%
+    CLEO_RegisterOpcode(0x3A00, AML_HAS_MOD_LOADED); // 3A00=2,%2d% = aml_has_mod_loaded %1s% // IF e SET
+    CLEO_RegisterOpcode(0x3A01, AML_HAS_MODVER_LOADED); // 3A01=3,%3d% = aml_has_mod_loaded %1s% versão %2s% // IF e SET
+    CLEO_RegisterOpcode(0x3A02, AML_REDIRECT_CODE); // 3A02=4,aml_redirect_code %1d% add_ib %2d% para %3d% add_ib %4d%
+    CLEO_RegisterOpcode(0x3A03, AML_JUMP_CODE); // 3A03=4,aml_jump_code %1d% add_ib %2d% para %3d% add_ib %4d%
     CLEO_RegisterOpcode(0x3A04, AML_GET_BRANCH_DEST); // 3A04=3,%3d% = aml_get_branch_dest %1d% add_ib %2d%
     CLEO_RegisterOpcode(0x3A05, AML_MLS_SAVE); // 3A05=0,aml_mls_save
-    CLEO_RegisterOpcode(0x3A06, AML_MLS_HAS_VALUE); // 3A06=1,aml_mls_has_value %1s% // IF and SET
+    CLEO_RegisterOpcode(0x3A06, AML_MLS_HAS_VALUE); // 3A06=1,aml_mls_has_value %1s% // IF e SET
     CLEO_RegisterOpcode(0x3A07, AML_MLS_DELETE_VALUE); // 3A07=1,aml_mls_delete_value %1s%
-    CLEO_RegisterOpcode(0x3A08, AML_MLS_SET_INT); // 3A08=2,aml_mls_set_int %1s% to %2d%
-    CLEO_RegisterOpcode(0x3A09, AML_MLS_SET_FLOAT); // 3A09=2,aml_mls_set_float %1s% to %2d%
-    CLEO_RegisterOpcode(0x3A0A, AML_MLS_SET_STRING); // 3A0A=2,aml_mls_set_string %1s% to %2s%
-    CLEO_RegisterOpcode(0x3A0B, AML_MLS_GET_INT); // 3A0B=3,%3d% = aml_mls_get_int %1s% default %2d%
-    CLEO_RegisterOpcode(0x3A0C, AML_MLS_GET_FLOAT); // 3A0C=3,%3d% = aml_mls_get_float %1s% default %2d%
-    CLEO_RegisterOpcode(0x3A0D, AML_MLS_GET_STRING); // 3A0D=3,%3s% = aml_mls_get_string %1s% default %2s%
-    CLEO_RegisterOpcode(0x3A0E, AML_DO_OPCODE_EXIST); // 3A0E=1,do_opcode_exist %1d% // IF and SET
+    CLEO_RegisterOpcode(0x3A08, AML_MLS_SET_INT); // 3A08=2,aml_mls_set_int %1s% para %2d%
+    CLEO_RegisterOpcode(0x3A09, AML_MLS_SET_FLOAT); // 3A09=2,aml_mls_set_float %1s% para %2d%
+    CLEO_RegisterOpcode(0x3A0A, AML_MLS_SET_STRING); // 3A0A=2,aml_mls_set_string %1s% para %2s%
+    CLEO_RegisterOpcode(0x3A0B, AML_MLS_GET_INT); // 3A0B=3,%3d% = aml_mls_get_int %1s% padrão %2d%
+    CLEO_RegisterOpcode(0x3A0C, AML_MLS_GET_FLOAT); // 3A0C=3,%3d% = aml_mls_get_float %1s% padrão %2d%
+    CLEO_RegisterOpcode(0x3A0D, AML_MLS_GET_STRING); // 3A0D=3,%3s% = aml_mls_get_string %1s% padrão %2s%
+    CLEO_RegisterOpcode(0x3A0E, AML_DO_OPCODE_EXIST); // 3A0E=1,do_opcode_exist %1d% // IF e SET
     CLEO_RegisterOpcode(0x3A0F, AML_PUSH_STRING_TO_VAR); // 3A0F=2,push_string %1d% to_var %2d%
-    CLEO_RegisterOpcode(0x3A10, AML_WRITE_FLOAT); // 3A10=3,write_float %1d% to %2d% add_ib %3d%
+    CLEO_RegisterOpcode(0x3A10, AML_WRITE_FLOAT); // 3A10=3,write_float %1d% para %2d% add_ib %3d%
     CLEO_RegisterOpcode(0x3A11, AML_VIBRATE); // 3A11=1,aml_vibrate %1d% ms
     CLEO_RegisterOpcode(0x3A12, AML_VIBRATE_STOP); // 3A12=0,aml_stop_vibro
-    CLEO_RegisterOpcode(0x3A13, AML_SHOW_TOAST); // 3A13=2,aml_show_toast %2s% longer %1d%
+    CLEO_RegisterOpcode(0x3A13, AML_SHOW_TOAST); // 3A13=2,aml_show_toast %2s% mais longo %1d%
     CLEO_RegisterOpcode(0x3A14, AML_BATTERY_LEVEL); // 3A14=1,%1d% = aml_get_battery_percentage // float
     CLEO_RegisterOpcode(0x3A15, AML_ANDROID_SDK_INT); // 3A15=1,%1d% = aml_get_android_ver
-    CLEO_RegisterOpcode(0x3A16, AML_WRITE_HEX); // 3A16=4,aml_write_hex_at %1d% add_ib %2d% from_label %3d% size %4d%
-    CLEO_RegisterOpcode(0x3A17, AML_READ_HEX); // 3A17=4,aml_read_hex_at %1d% add_ib %2d% to_label %3d% size %4d%
+    CLEO_RegisterOpcode(0x3A16, AML_WRITE_HEX); // 3A16=4,aml_write_hex_at %1d% add_ib %2d% from_label %3d% tamanho %4d%
+    CLEO_RegisterOpcode(0x3A17, AML_READ_HEX); // 3A17=4,aml_read_hex_at %1d% add_ib %2d% to_label %3d% tamanho %4d%
     CLEO_RegisterOpcode(0x3A18, AML_SET_PRIVATE_VAR); // 3A18=2,aml_set_private_var %2d% = %1d%
     CLEO_RegisterOpcode(0x3A19, AML_GET_PRIVATE_VAR); // 3A19=2,%2d% = aml_get_private_var %1d%
     CLEO_RegisterOpcode(0x3A1A, AML_GET_STACK_POINTER); // 3A1A=1,%1d% = aml_get_stack_ptr
@@ -891,14 +871,14 @@ ON_ALL_MODS_LOAD()
     CLEO_RegisterOpcode(0x3A1F, AML_STACK_DEALLOC); // 3A1F=1,aml_dealloc_stack_bytes %1d%
     CLEO_RegisterOpcode(0x3A20, AML_GET_ALIGNED_VALUE); // 3A20=2,%2d% = aml_get_aligned_value %1d%
 
-    // Fix Alexander Blade's ass code (returns NULL!!! BRUH)
+    // Correção no código de Alexander Blade (retornava NULL)
     cleo->GetCleoStorageDir = GetCLEODir;
     cleo->GetCleoPluginLoadDir = GetCLEODir;
 
-    // CLEO Scripts limit
+    // Limite de Scripts do CLEO
     if(*nGameIdent == GTASA)
     {
-        // 96 to 256
+        // 96 para 256
         g_nMaxScriptsCount = 96;
         if(cfg->GetBool("BumpScriptsLimit", true) &&
            *(uintptr_t*)(nGameAddr + 0x679658) == (nGameAddr + 0x7B778C))
@@ -908,9 +888,7 @@ ON_ALL_MODS_LOAD()
             g_nMaxScriptsCount = 256;
         }
 
-        // We're gonna force that patch. More textures, more possibilities (before we get stuff per script)
-        /*if(cfg->GetBool("BumpScriptTexturesLimit", true) &&
-           *(uintptr_t*)(nGameAddr + 0x678EAC) == (nGameAddr + 0x8194DC))*/
+        // Forçar esse patch. Mais texturas, mais possibilidades
         {
             aml->WriteAddr(nGameAddr + 0x678EAC, &g_ScriptSpritesStore[0]);
             aml->WriteAddr(nGameAddr + 0x67915C, &g_ScriptRectsStore[0]);
@@ -926,7 +904,7 @@ ON_ALL_MODS_LOAD()
     }
     else if(*nGameIdent == GTAVC)
     {
-        // 128 to 256
+        // 128 para 256
         g_nMaxScriptsCount = 128;
         if(cfg->GetBool("BumpScriptsLimit", true) &&
            *(uintptr_t*)(nGameAddr + 0x395C48) == (nGameAddr + 0x58F018))
@@ -937,12 +915,12 @@ ON_ALL_MODS_LOAD()
         }
     }
 
-    // CLEO Scripts binary storage limit
-    // from 2 megabytes to 16
+    // Limite de armazenamento binário dos Scripts do CLEO
+    // de 2 megabytes para 16
     aml->WriteAddr(nCLEOAddr + 0x193AC, (uintptr_t)&g_ScriptBytesBuffer[0]);
     aml->Write32(nCLEOAddr + 0x6422, 0x9118F8D3);
 
-    // CLEO4+5 Opcodes
+    // Opcodes CLEO 4+5
     sprintf(g_szSavesPath, "%s/sav", cleo->GetCleoStorageDir());
     Init201Opcodes();
     Init4Opcodes();
@@ -1000,16 +978,16 @@ ON_ALL_MODS_LOAD()
         HOOK(ProcessScript, cleo->GetMainLibrarySymbol("_ZN14CRunningScript7ProcessEv"));
     }
 
-    // MathOperations Opcodes
+    // Opcodes de Operações Matemáticas
     InitMathOpcodes();
 
-    // DMA Fix (only in GTA:SA!)
+    // Correção de DMA (apenas no GTA:SA!)
     if(*nGameIdent == GTASA)
     {
         aml->Write8(nGameAddr + 0x32950A + 0x1, 0x68);
     }
 
-    // CLEO 2.0.1: Fixed 8byte string reading (fixes opcode 0DDE)
+    // CLEO 2.0.1: Leitura de string de 8 bytes corrigida (corrige opcode 0DDE)
     aml->Write16(nCLEOAddr + 0x689A, 0x1C79);
     aml->Write16(nCLEOAddr + 0x68A6, 0x3309);
 }
@@ -1025,27 +1003,25 @@ ON_MOD_UNLOAD()
 
 ON_GAME_CRASH()
 {
-    // Print lastScript* data to the cleo logging!
+    // Imprime os dados de lastScript* no log do CLEO!
     if(!cleo) return;
-    cleo->PrintToCleoLog("[ The game crashed ]");
+    cleo->PrintToCleoLog("[ O jogo encerrou inesperadamente ]");
 
     if(scriptDebugger)
     {
         char buf[512], defName[8], custName[128];
         int callNum = 0;
 
-        cleo->PrintToCleoLog("The data below is not guaranteed to be correct!");
-        cleo->PrintToCleoLog("CLEO callstack list:");
+        cleo->PrintToCleoLog("Os dados abaixo não têm garantia de precisão!");
+        cleo->PrintToCleoLog("Lista da pilha de chamadas (callstack) do CLEO:");
         for(int i = SCRIPTS_LOG_COUNT-1; i >= 0; --i)
         {
             if(!lastScriptHandle[i] || !lastScriptPC[i]) continue;
         
-            // Check if this script handle is still correct
-            // If it is, we have a name, filename, a complete script code and more!
+            // Verifica se o ponteiro/handle do script ainda é válido
             if(!IsValidScriptHandle(lastScriptHandle[i]))
             {
-                // It does not contain a valid data anymore: was deleted or something like that.
-                snprintf(buf, sizeof(buf), "CALL #%d, Unknown Script 0x%08X, OpCode %04X", ++callNum, (uintptr_t)lastScriptHandle[i], lastScriptOp[i]);
+                snprintf(buf, sizeof(buf), "CHAMADA #%d, Script Desconhecido 0x%08X, OpCode %04X", ++callNum, (uintptr_t)lastScriptHandle[i], lastScriptOp[i]);
                 cleo->PrintToCleoLog(buf);
                 continue;
             }
@@ -1065,11 +1041,11 @@ ON_GAME_CRASH()
                     const char* filename = CLEO_GetScriptFilename(parentThread);
                     if(filename)
                     {
-                        snprintf(custName, sizeof(custName), "thread of \"%s\"", filename);
+                        snprintf(custName, sizeof(custName), "thread de \"%s\"", filename);
                     }
                     else
                     {
-                        strncpy(custName, "thread of \"unknown script\"", sizeof(custName));
+                        strncpy(custName, "thread de \"script desconhecido\"", sizeof(custName));
                     }
                     custName[sizeof(custName)-1] = 0;
                 }
@@ -1080,24 +1056,15 @@ ON_GAME_CRASH()
                 }
             }
             
-            snprintf(buf, sizeof(buf), "CALL #%d, %s Script '%s', OpCode %04X", ++callNum, isCustom ? "CLEO" : "Game", custName[0] != 0 ? custName : defName, lastScriptOpcode);
+            snprintf(buf, sizeof(buf), "CHAMADA #%d, Script %s '%s', OpCode %04X", ++callNum, isCustom ? "CLEO" : "do Jogo", custName[0] != 0 ? custName : defName, lastScriptOpcode);
             cleo->PrintToCleoLog(buf);
 
             GetPC(lastScriptHandle[i]) = backupPC;
         }
-        cleo->PrintToCleoLog("[ Crashlog Ending ]");
+        cleo->PrintToCleoLog("[ Fim do Registro de Crash ]");
     }
     else
     {
-        cleo->PrintToCleoLog("[ Script debugging was not enabled ]");
+        cleo->PrintToCleoLog("[ Depuração de scripts não estava ativada ]");
     }
 }
-
-//ON_NEW_INTERFACE()
-//{
-//    if(!strcmp(name, "SAUtils"))
-//    {
-//        sautils = (ISAUtils*)ptr;
-//        SAUtilsStarted();
-//    }
-//}
