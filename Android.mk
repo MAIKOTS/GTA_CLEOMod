@@ -7,4 +7,6 @@ LOCAL_SRC_FILES := main.cpp mod/logger.cpp mod/config.cpp libcleo.cpp cleo201_re
 LOCAL_CFLAGS += -O2 -mfloat-abi=softfp -DNDEBUG -std=c11 -DAML_CLEO
 LOCAL_CXXFLAGS += -O2 -mfloat-abi=softfp -DNDEBUG -std=c++17
 LOCAL_LDLIBS := -llog -lc++fs
+LOCAL_LDFLAGS += -lc++fs
+
 include $(BUILD_SHARED_LIBRARY)
