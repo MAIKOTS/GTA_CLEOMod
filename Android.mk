@@ -9,7 +9,5 @@ LOCAL_CFLAGS += -O2 -mfloat-abi=softfp -DNDEBUG -std=c11 -DAML_CLEO
 LOCAL_CXXFLAGS += -O2 -mfloat-abi=softfp -DNDEBUG -std=c++17
 
 LOCAL_LDLIBS := -llog
-# No NDK r21, o Clang reconhece a biblioteca de filesystem quando passada via -L com a pasta interna de toolchains
-LOCAL_LDFLAGS += -L$(NDK_ROOT)/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi -lc++fs
 
 include $(BUILD_SHARED_LIBRARY)
