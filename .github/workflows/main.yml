@@ -32,10 +32,10 @@ jobs:
       with:
         args: -O ./isautils.h https://github.com/AndroidModLoader/SAUtils/raw/main/isautils.h
 
-    - name: Install Android NDK (r23b)...
+    - name: Install Android NDK (r22b)...
       uses: nttld/setup-ndk@v1
       with:
-        ndk-version: r23b
+        ndk-version: r22b
         local-cache: true
 
     - name: Build the code...
