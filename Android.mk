@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 # Importa estaticamente o módulo de filesystem do próprio NDK r21
 include $(CLEAR_VARS)
 LOCAL_MODULE := c++fs_static
-LOCAL_SRC_FILES := $(NDK_OUT)/../sources/cxx-stl/llvm-libc++/libs/$(TARGET_ARCH_ABI)/libc++fs.a
+LOCAL_SRC_FILES := $(NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/$(TARGET_ARCH_ABI)/libc++fs.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 # Compilador do seu Mod
