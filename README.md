@@ -1,22 +1,27 @@
-### CLEO? For Android?
-Well, yes! This is a CLEO wrapped in an AML mod!
-Original author of a CLEO on Android is Alexander Blade (http://www.dev-c.com/).
+### CLEO? Para Android?
+Pois é! Este é o CLEO integrado em uma modificação para o AML!  
+O autor original do CLEO no Android é Alexander Blade (http://www.dev-c.com/).
 
-**Please keep in mind that you should not download random CLEO scripts! They may be malicious and may delete your game data!**
+**Tenha em mente que você não deve baixar scripts CLEO aleatórios! Eles podem ser maliciosos e apagar os dados do seu jogo!**
 
-### Why does it exists?
-This one allows mods made specially for AML to communicate with the CLEO. Also, it has NEW settings that you WILL LIKE!
+---
 
-### I miss the PC opcodes! Can i get them?
-YES! YOU CAN! But not all of them.
-They are implemented in this CLEOMod and are already working, there is no need to enable them somewhere. However, Sanny Builder 3 doesnt know these opcodes.
-If you want to use them to compile your scripts, you need to manually add them to the configuration file.
+### Por que ele existe?
+Esta versão permite que mods feitos especialmente para o AML se comuniquem com o CLEO. Além disso, ela inclui NOVAS configurações que VOCÊ VAI GOSTAR!
 
-Here is how to do this:
-1. Enter the directory of Sanny Builder 3
-2. Enter ../data/sa_mobile (or ../data/vc_mobile for GTA:VC Android)
-3. Open and add these lines at the end of the file SASCM.ini (or VCSCM.ini):
-```
+---
+
+### Sinto falta dos opcodes do PC! Posso usá-los?
+SIM! VOCÊ PODE! Mas não todos eles.  
+Eles estão implementados neste CLEOMod e já estão funcionando, não há necessidade de ativá-los em nenhum lugar. No entanto, o **Sanny Builder 3** não reconhece esses opcodes por padrão.  
+Se você quiser usá-los para compilar seus scripts, precisará adicioná-los manualmente ao arquivo de configuração.
+
+**Aqui está como fazer isso:**
+1. Acesse o diretório do Sanny Builder 3.
+2. Vá para `../data/sa_mobile` (ou `../data/vc_mobile` para GTA:VC Android).
+3. Abra e adicione estas linhas ao final do arquivo `SASCM.ini` (ou `VCSCM.ini`):
+
+```ini
 0A8E=3,%3d% = %1d% + %2d% ; int
 0A8F=3,%3d% = %1d% - %2d% ; int
 0A90=3,%3d% = %1d% * %2d% ; int
@@ -37,7 +42,7 @@ Here is how to do this:
 0AA2=2,%2h% = load_library %1d% // IF and SET
 0AA3=1,free_library %1h%
 0AA4=3,%3d% = get_proc_address %1d% library %2d% // IF and SET
-0AA9=0,is_game_version_original // always false, use 0DD6 (GET_GAME_VERSION) for Android
+0AA9=0,is_game_version_original // sempre falso, use 0DD6 (GET_GAME_VERSION) para Android
 0AAA=2,%2d% = thread %1d% pointer // IF and SET
 0AAB=1,file_exists %1d%
 0AB1=-1,call_scm_func %1p%
@@ -73,7 +78,7 @@ Here is how to do this:
 0ADA=-1,%3d% = scan_file %1d% format %2d% // IF and SET
 0ADB=2,%2d% = car_model %1o% name
 0ADC=1,test_cheat %1d%
-0ADD=1,spawn_car_with_model %1o% at_player_location // IF and SET // custom if-set condition
+0ADD=1,spawn_car_with_model %1o% at_player_location // IF and SET // condição customizada if-set
 0ADE=2,%2d% = text_by_GXT_entry %1d%
 0ADF=2,add_dynamic_GXT_entry %1d% text %2d%
 0AE0=1,remove_dynamic_GXT_entry %1d%
@@ -82,14 +87,14 @@ Here is how to do this:
 0AE6=3,%2d% = find_first_file %1d% get_filename_to %3d% // IF and SET
 0AE7=2,%2d% = find_next_file %1d% // IF and SET
 0AE8=1,find_close %1d%
-0AE9=1,pop_float store_to %1d% // returns 0, ARMv7 differs from x86
+0AE9=1,pop_float store_to %1d% // retorna 0, ARMv7 difere de x86
 0AEA=2,%2d% = actor_struct %1d% handle
 0AEB=2,%2d% = car_struct %1d% handle
 0AEC=2,%2d% = object_struct %1d% handle
-0AEE=3,%3d% = %1d% exp %2d% // all floats
-0AEF=3,%3d% = log %1d% base %2d% // all floats
-0AF6=-1,ret_if_false // custom 0AB2
-0AF7=-1,ret_if_true // custom 0AB2
+0AEE=3,%3d% = %1d% exp %2d% // todos decimais (floats)
+0AEF=3,%3d% = log %1d% base %2d% // todos decimais (floats)
+0AF6=-1,ret_if_false // customizado 0AB2
+0AF7=-1,ret_if_true // customizado 0AB2
 0AF8=1,save_local_vars_named %1d% // IF and SET
 0AF9=1,load_local_vars_named %1d% // IF and SET
 0AFA=1,delete_local_vars_save %1d% // IF and SET
@@ -115,7 +120,7 @@ Here is how to do this:
 0CD0=1,has_vehicle_radio %1d% // IF and SET
 0CD1=1,has_vehicle_struct_radio %1d% // IF and SET
 0CD2=1,%1d% = get_ram_megabytes
-0CD3=1,%1d% = get_free_ram_megabytes // do not call it very often, its not fast
+0CD3=1,%1d% = get_free_ram_megabytes // não chame isso com frequência, não é rápido
 0CD4=2,%2d% = import_scm_addr %1d% // IF and SET
 0CD5=2,export_scm_label %1d% as %2d%
 0CD6=2,export_scm_value %1d% as %2d%
@@ -158,8 +163,8 @@ Here is how to do this:
 3A20=2,%2d% = aml_get_aligned_value %1d%
 ```
 
-There is an additional opcodes for GTA:SA Android:
-```
+Existem opcodes adicionais para GTA:SA Android:
+```ini
 0AB5=3,store_actor %1d% closest_vehicle_to %2d% closest_ped_to %3d%
 0AB6=3,store_target_marker_coords_to %1d% %2d% %3d% // IF and SET
 0AE1=7,%7d% = find_actor_near_point %1d% %2d% %3d% in_radius %4d% find_next %5h% pass_deads %6h% // IF and SET
@@ -167,16 +172,18 @@ There is an additional opcodes for GTA:SA Android:
 0AE3=6,%6d% = find_object_near_point %1d% %2d% %3d% in_radius %4d% find_next %5h% // IF and SET
 ```
 
-If you need extensions such as IniFiles or IntOperations, they are already available! You can find them in our project's Discord (https://discord.gg/2MY7W39kBg) or get them here:
+Se você precisar de extensões como IniFiles ou IntOperations, elas já estão disponíveis! Você pode encontrá-las no Discord do nosso projeto (https://discord.gg/2MY7W39kBg) ou obtê-las aqui:
 
-https://github.com/AndroidModLoader/GTA_CLEO_IniFiles 
-https://github.com/AndroidModLoader/GTA_CLEO_IntOperations
+* https://github.com/AndroidModLoader/GTA_CLEO_IniFiles
+* https://github.com/AndroidModLoader/GTA_CLEO_IntOperations
 
-### About CLEO5
-This version of a mod contains a few CLEO5 opcodes. I dont wanna continue working on it because it's a broken ass that is not completed yet.
+---
 
-Opcodes from CLEO5 in this mod (except debugging ones!!!):
-```
+### Sobre o CLEO5
+Esta versão do mod contém alguns opcodes do CLEO5. Não pretendo continuar trabalhando nele porque é um projeto incompleto e bastante instável no momento.
+
+Opcodes do CLEO5 presentes neste mod (exceto os de depuração/debug):
+```ini
 2400=3, copy_memory %1d% to %2d% size %3d%
 2401=4, read_memory_with_offset %1d% offset %2d% size %3d% store_to %4d%
 2402=4, write_memory_with_offset %1d% offset %2d% size %3d% value %4d%
@@ -220,9 +227,12 @@ Opcodes from CLEO5 in this mod (except debugging ones!!!):
 2708=1, random_chance %1d%
 ```
 
-### Another opcodes
-I also moved MathOperations into the CLEOMod itself! Starting with 2.0.1.7, there is new math opcodes:
-```
+---
+
+### Outros opcodes
+Também mudei as operações matemáticas (*MathOperations*) diretamente para o CLEOMod! A partir da versão 2.0.1.7, há novos opcodes matemáticos disponíveis:
+
+```ini
 1C00=2,%2d% = to_radian %1d%
 1C01=2,%2d% = to_degree %1d%
 1C02=3,%3d% = modulo_int %1d% %2d%
